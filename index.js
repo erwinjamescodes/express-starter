@@ -6,6 +6,7 @@ import userRouter from "./routes/user.route.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 import postRouter from "./routes/post.route.js";
 import commentRouter from "./routes/comment.route.js";
+import { specs, swaggerUi } from "./swagger.config.js";
 
 dotenv.config();
 
@@ -13,6 +14,9 @@ const app = express();
 
 app.use(express.json());
 app.use(errorMiddleware);
+
+// Swagger API documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
