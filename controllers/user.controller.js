@@ -1,0 +1,24 @@
+import User from "../models/user.model.js";
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).send({ message: "Users fetched successfully", users });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    res.status(200).send({ message: "User fetched successfully", user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
