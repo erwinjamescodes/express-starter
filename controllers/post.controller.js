@@ -23,7 +23,6 @@ export const getAllPosts = async (req, res) => {
 
     let query = {};
 
-    // Filter by current user if requested
     if (currentUser === "true") {
       query.author = req.user.id;
     }
@@ -63,7 +62,6 @@ export const updatePost = async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
 
-    // Find and update only if the post belongs to the current user
     const post = await Post.findOneAndUpdate(
       { _id: id, author: req.user.id }, // Only author can update
       { title, content },
@@ -87,7 +85,6 @@ export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find and delete only if the post belongs to the current user
     const post = await Post.findOneAndDelete({
       _id: id,
       author: req.user.id,

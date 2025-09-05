@@ -10,7 +10,6 @@ import {
 const commentRouter = Router();
 
 commentRouter.post("/post/:postId", authMiddleware, createComment);
-
 commentRouter.get("/post/:postId", authMiddleware, getCommentsByPost);
 commentRouter.put("/:id", authMiddleware, updateComment);
 commentRouter.delete("/:id", authMiddleware, deleteComment);
