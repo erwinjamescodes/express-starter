@@ -4,19 +4,18 @@ import mongoose from "mongoose";
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import errorMiddleware from "./middleware/error.middleware.js";
-import authMiddleware from "./middleware/auth.middleware.js";
+import postRouter from "./routes/post.route.js";
 
 dotenv.config();
 
 const app = express();
+
 app.use(express.json());
+app.use(errorMiddleware);
 
 app.use("/auth", authRouter);
-
-app.use(authMiddleware);
 app.use("/users", userRouter);
-
-app.use(errorMiddleware);
+app.use("/posts", postRouter);
 
 mongoose
   .connect(
