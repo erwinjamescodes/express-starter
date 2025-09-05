@@ -1,4 +1,5 @@
 import Post from "../models/posts.model.js";
+import Comment from "../models/comment.model.js";
 
 export const createPost = async (req, res) => {
   try {
@@ -46,7 +47,11 @@ export const getPostById = async (req, res) => {
         .send({ success: false, message: "Post not found" });
     }
 
-    res.status(200).send({ success: true, post });
+    const comments = await Comment.find({ post: id })
+      .populate("author", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).send({ success: true, post, comments });
   } catch (error) {
     console.log(error);
     res.status(500).send({ success: false, message: "Internal server error" });
@@ -57,11 +62,20 @@ export const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
-    const post = await Post.findByIdAndUpdate(
-      id,
+
+    // Find and update only if the post belongs to the current user
+    const post = await Post.findOneAndUpdate(
+      { _id: id, author: req.user.id }, // Only author can update
       { title, content },
       { new: true }
-    );
+    ).populate("author", "name email");
+
+    if (!post) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Post not found or unauthorized" });
+    }
+
     res.status(200).send({ success: true, post });
   } catch (error) {
     console.log(error);
@@ -72,7 +86,19 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
-    await Post.findByIdAndDelete(id);
+
+    // Find and delete only if the post belongs to the current user
+    const post = await Post.findOneAndDelete({
+      _id: id,
+      author: req.user.id,
+    });
+
+    if (!post) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Post not found or unauthorized" });
+    }
+
     res
       .status(200)
       .send({ success: true, message: "Post deleted successfully" });

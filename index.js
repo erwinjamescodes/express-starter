@@ -5,6 +5,7 @@ import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 import postRouter from "./routes/post.route.js";
+import commentRouter from "./routes/comment.route.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(errorMiddleware);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
+app.use("/comments", commentRouter);
 
 mongoose
   .connect(
